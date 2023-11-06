@@ -140,4 +140,4 @@ dist
 *.sln
 *.sw?
 db.json
-cypress/videos/
+*/cypress/videos/
