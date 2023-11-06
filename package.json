@@ -1,15 +1,16 @@
 {
   "name": "bloglist",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development nodemon index.js",
-    "build:ui": "rm -rf dist && cd ./client  && npm run build && cp -r dist ../server",
+    "build:ui": "rm -rf dist && cd ./client  && npm run build && cp -r dist ../",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
     "lint": "eslint .",
-    "test": "NODE_ENV=test jest --verbose --runInBand",
+    "test": "NODE_ENV=test jest --runInBand",
+    "cypress:open": "cypress open",
+    "test:e2e": "cypress run",
     "start:test": "NODE_ENV=test node index.js"
   },
   "keywords": [],
@@ -27,10 +28,23 @@
     "mongoose-unique-validator": "^4.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.47.0",
+    "@babel/preset-env": "^7.23.2",
+    "@babel/preset-react": "^7.22.15",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.0.0",
+    "@vitejs/plugin-react": "^4.1.1",
+    "cypress": "^13.4.0",
+    "eslint": "^8.53.0",
+    "eslint-plugin-cypress": "^2.15.1",
+    "eslint-plugin-jest": "^27.6.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.4",
     "jest": "^29.6.2",
+    "jest-environment-jsdom": "^29.7.0",
     "nodemon": "^3.0.1",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.3",
+    "vite": "^4.5.0"
   },
   "jest": {
     "testEnvironment": "node"

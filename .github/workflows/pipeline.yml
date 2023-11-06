@@ -1,0 +1,49 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+jobs:
+  simple_deployment_pipeline:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install && cd client && npm install
+      - name: Check style
+        run: npm run lint
+      - name: build
+        run: npm run build:ui
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+          envkey_MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          envkey_SECRET: ${{ secrets.SECRET }}
+          envkey_PORT: ${{ secrets.PORT }}
+          file_name: .env
+          fail_on_empty: false
+          sort_keys: false
+      - name: test
+        run: npm run test --verbose --maxWorkers=2
+      - name: e2e tests
+        uses: cypress-io/github-action@v6
+        with:
+          command: npm run test:e2e
+          start: npm run start:test
+          wait-on: http://localhost:3000
+      - name: Deploy
+        # Only run this step if the branch is main
+        if: ${{ github.ref == 'refs/heads/master' }} && ${{ github.event_name == 'push' }}
+        env:
+          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          curl "$deploy_url"

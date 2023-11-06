@@ -6,11 +6,12 @@ describe('Blog app', function () {
   })
 
   it('Login form is shown', function () {
-    cy.contains('log in to application')
+    cy.contains('login')
   })
 
   describe('Login', function () {
     it('succeeds with correct credentials', function () {
+      cy.contains('login').click()
       cy.get('#username').type('user1')
       cy.get('#password').type('user1pwd')
       cy.get('#login-button').click()
@@ -19,6 +20,7 @@ describe('Blog app', function () {
     })
 
     it('fails with wrong credentials', function () {
+      cy.contains('login').click()
       cy.get('#username').type('user1')
       cy.get('#password').type('user1')
       cy.get('#login-button').click()
@@ -34,7 +36,7 @@ describe('Blog app', function () {
     })
 
     it('A blog can be created', function () {
-      cy.contains('new blog').click()
+      cy.contains('create new').click()
       cy.get('#blog-title').type('this is a new blog')
       cy.get('#blog-author').type('Emilie Zhang')
       cy.get('#blog-url').type('localhost:5173')
@@ -54,14 +56,14 @@ describe('Blog app', function () {
       })
 
       it('a blog can be liked', function () {
-        cy.contains('show').click()
+        cy.contains('this is another blog').click()
         cy.contains('like').click()
 
-        cy.contains('likes 1')
+        cy.contains('1 likes')
       })
 
       it('the creator can delete it', function () {
-        cy.contains('show').click()
+        cy.contains('this is another blog').click()
         cy.contains('delete').click()
 
         cy.contains('removed')
@@ -71,16 +73,16 @@ describe('Blog app', function () {
       it('a non creator can not delete a blog', function () {
         cy.contains('logout').click()
         cy.login({ username: 'user2', password: 'user2pwd' })
-        cy.contains('show').click()
+        cy.contains('this is another blog').click()
         cy.contains('delete').should('not.exist')
       })
     })
 
     describe('and several blogs exists', function () {
       const blogs = [
-        { title: 'The title with the most likes', author: 'cypress', url: 'localhost:5173' },
-        { title: 'The title with the second most likes', author: 'cypress', url: 'localhost:5173' },
-        { title: 'The title with the third most likes', author: 'cypress', url: 'localhost:5173' }
+        { title: 'new Blog A', author: 'cypress', url: 'localhost:5173' },
+        { title: 'new Blog B', author: 'cypress', url: 'localhost:5173' },
+        { title: 'new Blog C', author: 'cypress', url: 'localhost:5173' }
       ]
       beforeEach(function () {
         cy.createBlog(blogs[0])
@@ -89,21 +91,21 @@ describe('Blog app', function () {
       })
 
       it('blogs are ordered according to likes', () => {
-        cy.contains(blogs[0].title).as('mostLikes')
-        cy.get('@mostLikes').contains('show').click()
-        cy.get('@mostLikes').contains('like').click()
+        cy.contains(blogs[0].title).click()
+        cy.get('.like').click()
         cy.wait(500)
-        cy.get('@mostLikes').contains('like').click()
+        cy.get('.like').click()
         cy.wait(500)
-        cy.get('@mostLikes').contains('like').click()
+        cy.get('.like').click()
         cy.wait(500)
 
+        cy.contains('blogs').click()
         cy.contains(blogs[1].title).as(
           'secondMostLikes'
-        )
-        cy.get('@secondMostLikes').contains('show').click()
-        cy.get('@secondMostLikes').contains('like').click()
+        ).click()
+        cy.get('.like').click()
 
+        cy.contains('blogs').click()
         cy.get('.blog').eq(0).should('contain', blogs[0].title)
         cy.get('.blog').eq(1).should('contain', blogs[1].title)
         cy.get('.blog').eq(2).should('contain', blogs[2].title)

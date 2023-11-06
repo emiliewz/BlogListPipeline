@@ -62,7 +62,7 @@ const Blog = ({ blog }) => {
         </Card.Text>
 
         <Card.Text>
-          {blog.likes} likes {loggedin && <button onClick={() => like(blog)}>like</button>}
+          {blog.likes} likes {loggedin && <button onClick={() => like(blog)} className='like'>like</button>}
         </Card.Text>
 
         <Card.Text>added by {blog.user.name}</Card.Text>

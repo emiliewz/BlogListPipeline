@@ -18,7 +18,7 @@ const BlogList = () => {
         <tbody>
           {[...blogs].sort(byLikes).map(blog => (
             <tr key={blog.id}>
-              <td>
+              <td className='blog'>
                 <Link className='text-decoration-none' to={`/blogs/${blog.id}`}>
                   {blog.title}
                 </Link>

@@ -1,9 +1,9 @@
 const supertest = require('supertest')
 const mongoose = require('mongoose')
-const app = require('../app')
+const app = require('../server/app')
 
 const api = supertest(app)
-const User = require('../models/user')
+const User = require('../server/models/user')
 const bcrypt = require('bcrypt')
 
 const { usersInDb, initialUsers } = require('./test_helper')

@@ -27,6 +27,7 @@ const App = () => {
     dispatch(initializeBlogs())
     dispatch(initializeUsers())
     dispatch(initializeLogin())
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const singleUser = matchUser

@@ -1,19 +1,27 @@
-import loginService from '../services/login'
 import { createSlice } from '@reduxjs/toolkit'
+
+import loginService from '../services/login'
 import storageService from '../services/storage'
+import { setNotification } from './infoReducer'
+
 import blogService from '../services/blogs'
+
+const initialState = null
 
 const loginSlice = createSlice({
   name: 'login',
-  initialState: null,
+  initialState,
   reducers: {
-    setLogin(state, action) {
+    set(state, action) {
       return action.payload
+    },
+    clear() {
+      return initialState
     }
   }
 })
 
-export const { setLogin } = loginSlice.actions
+export const { set, clear } = loginSlice.actions
 
 export const initializeLogin = () => {
   return async dispatch => {
@@ -21,24 +29,28 @@ export const initializeLogin = () => {
 
     if (loadedUser) {
       blogService.setToken(loadedUser.token)
-      dispatch(setLogin(loadedUser))
+      dispatch(set(loadedUser))
     }
   }
 }
 
 export const loginWith = (credentials) => {
   return async dispatch => {
-    const user = await loginService.login(credentials)
-    storageService.saveUser(user)
-    blogService.setToken(user.token)
-    dispatch(setLogin(user))
+    try {
+      const user = await loginService.login(credentials)
+      storageService.saveUser(user)
+      blogService.setToken(user.token)
+      dispatch(set(user))
+    } catch (e) {
+      dispatch(setNotification('wrong username or password', 'error'))
+    }
   }
 }
 
 export const logout = () => {
   return async dispatch => {
     storageService.removeUser()
-    dispatch(setLogin(null))
+    dispatch(set(null))
   }
 }
 
